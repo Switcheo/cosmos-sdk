@@ -4,7 +4,6 @@ module github.com/cosmos/cosmos-sdk
 
 require (
 	github.com/99designs/keyring v1.1.6
-	github.com/DataDog/zstd v1.4.5 // indirect
 	github.com/armon/go-metrics v0.3.6
 	github.com/bgentry/speakeasy v0.1.0
 	github.com/btcsuite/btcd v0.21.0-beta
@@ -13,14 +12,11 @@ require (
 	github.com/cosmos/go-bip39 v1.0.0
 	github.com/cosmos/iavl v0.15.3
 	github.com/cosmos/ledger-cosmos-go v0.11.1
-	github.com/dgraph-io/ristretto v0.0.3 // indirect
-	github.com/dgryski/go-farm v0.0.0-20200201041132-a6ae2369ad13 // indirect
 	github.com/enigmampc/btcutil v1.0.3-0.20200723161021-e2fb6adb2a25
 	github.com/gogo/gateway v1.1.0
 	github.com/gogo/protobuf v1.3.3
 	github.com/golang/mock v1.4.4
 	github.com/golang/protobuf v1.4.3
-	github.com/golang/snappy v0.0.2 // indirect
 	github.com/gorilla/handlers v1.5.1
 	github.com/gorilla/mux v1.8.0
 	github.com/grpc-ecosystem/go-grpc-middleware v1.2.2
@@ -47,10 +43,10 @@ require (
 	github.com/tendermint/crypto v0.0.0-20191022145703-50d29ede1e15
 	github.com/tendermint/go-amino v0.16.0
 	github.com/tendermint/tendermint v0.34.9
-	github.com/tendermint/tm-db v0.6.4
+	github.com/tendermint/tm-db v0.6.5
 	golang.org/x/crypto v0.0.0-20201221181555-eec23a3978ad
 	google.golang.org/genproto v0.0.0-20210114201628-6edceaf6022f
-	google.golang.org/grpc v1.35.0
+	google.golang.org/grpc v1.38.0
 	google.golang.org/protobuf v1.25.0
 	gopkg.in/yaml.v2 v2.4.0
 )
