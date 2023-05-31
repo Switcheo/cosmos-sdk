@@ -485,7 +485,7 @@ func (m *Manager) BeginBlock(ctx sdk.Context, req abci.RequestBeginBlock) abci.R
 		if ok {
 			startTime := time.Now()
 			module.BeginBlock(ctx, req)
-			telemetry.ModuleMeasureSince(moduleName+"testmm3", startTime, telemetry.MetricKeyBeginBlocker)
+			telemetry.ModuleMeasureSince(moduleName, startTime, telemetry.MetricKeyBeginBlocker)
 		}
 	}
 
@@ -508,7 +508,7 @@ func (m *Manager) EndBlock(ctx sdk.Context, req abci.RequestEndBlock) abci.Respo
 		}
 		startTime := time.Now()
 		moduleValUpdates := module.EndBlock(ctx, req)
-		telemetry.ModuleMeasureSince(moduleName+"testmm3", startTime, telemetry.MetricKeyEndBlocker)
+		telemetry.ModuleMeasureSince(moduleName, startTime, telemetry.MetricKeyEndBlocker)
 
 		// use these validator updates if provided, the module manager assumes
 		// only one module will update the validator set
