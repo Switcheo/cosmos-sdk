@@ -203,6 +203,14 @@ func (app *BaseApp) SetPostHandler(ph sdk.AnteHandler) {
 	app.postHandler = ph
 }
 
+func (app *BaseApp) SetRefundHandler(rh sdk.AnteHandler) {
+	if app.sealed {
+		panic("SetRefundHandler() on sealed BaseApp")
+	}
+
+	app.refundHandler = rh
+}
+
 func (app *BaseApp) SetAddrPeerFilter(pf sdk.PeerFilter) {
 	if app.sealed {
 		panic("SetAddrPeerFilter() on sealed BaseApp")
