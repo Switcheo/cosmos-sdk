@@ -757,15 +757,17 @@ func (app *BaseApp) runTx(mode runTxMode, txBytes []byte) (gInfo sdk.GasInfo, re
 			result.Events = append(anteEvents, result.Events...)
 		}
 	} else {
-		refundCtx := runMsgCtx.WithEventManager(sdk.NewEventManager())
+		if app.refundHandler != nil {
+			refundCtx, msCache := app.cacheTxContext(ctx, txBytes)
+			_, err := app.refundHandler(refundCtx, tx, mode == runTxModeSimulate)
+			if err != nil {
+				return gInfo, result, anteEvents, priority, err
+			}
 
-		newCtx, err := app.refundHandler(refundCtx, tx, mode == runTxModeSimulate)
-
-		if err != nil {
-			return gInfo, result, anteEvents, priority, err
+			if mode == runTxModeDeliver {
+				msCache.Write()
+			}
 		}
-
-		result.Events = append(result.Events, newCtx.EventManager().ABCIEvents()...)
 	}
 
 	return gInfo, result, anteEvents, priority, err
