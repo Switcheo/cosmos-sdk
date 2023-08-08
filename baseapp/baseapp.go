@@ -759,13 +759,18 @@ func (app *BaseApp) runTx(mode runTxMode, txBytes []byte) (gInfo sdk.GasInfo, re
 	} else {
 		if app.refundHandler != nil {
 			refundCtx, msCache := app.cacheTxContext(ctx, txBytes)
-			_, err := app.refundHandler(refundCtx, tx, mode == runTxModeSimulate)
+			refundCtx = refundCtx.WithEventManager(sdk.NewEventManager())
+			newCtx, err := app.refundHandler(refundCtx, tx, mode == runTxModeSimulate)
 			if err != nil {
 				return gInfo, result, anteEvents, priority, err
 			}
 
 			if mode == runTxModeDeliver {
 				msCache.Write()
+			}
+
+			if len(anteEvents) > 0 && (mode == runTxModeDeliver || mode == runTxModeSimulate) {
+				anteEvents = append(anteEvents, newCtx.EventManager().ABCIEvents()...)
 			}
 		}
 	}
