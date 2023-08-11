@@ -226,12 +226,14 @@ func (GenesisOnlyAppModule) EndBlock(_ sdk.Context, _ abci.RequestEndBlock) []ab
 // Manager defines a module manager that provides the high level utility for managing and executing
 // operations for a group of modules
 type Manager struct {
-	Modules            map[string]AppModule
-	OrderInitGenesis   []string
-	OrderExportGenesis []string
-	OrderBeginBlockers []string
-	OrderEndBlockers   []string
-	OrderMigrations    []string
+	Modules              map[string]AppModule
+	OrderInitGenesis     []string
+	OrderExportGenesis   []string
+	OrderBeginBlockers   []string
+	OrderEndBlockers     []string
+	OrderMigrations      []string
+	beforeModuleEndBlock func(moduleName string)
+	afterModuleEndBlock  func(moduleName string)
 }
 
 // NewManager creates a new Manager object
@@ -288,6 +290,16 @@ func (m *Manager) RegisterInvariants(ir sdk.InvariantRegistry) {
 	for _, module := range m.Modules {
 		module.RegisterInvariants(ir)
 	}
+}
+
+// RegisterBeforeModuleEndBlock registers beforeModuleEndBlock
+func (m *Manager) RegisterBeforeModuleEndBlock(cb func(moduleName string)) {
+	m.beforeModuleEndBlock = cb
+}
+
+// RegisterAfterModuleEndBlock registers afterModuleEndBlock
+func (m *Manager) RegisterAfterModuleEndBlock(cb func(moduleName string)) {
+	m.afterModuleEndBlock = cb
 }
 
 // RegisterRoutes registers all module routes and module querier routes
@@ -506,9 +518,14 @@ func (m *Manager) EndBlock(ctx sdk.Context, req abci.RequestEndBlock) abci.Respo
 		if !ok {
 			continue
 		}
-		startTime := time.Now()
+
+		if m.beforeModuleEndBlock != nil {
+			m.beforeModuleEndBlock(moduleName)
+		}
 		moduleValUpdates := module.EndBlock(ctx, req)
-		telemetry.ModuleMeasureSince(moduleName, startTime, telemetry.MetricKeyEndBlocker)
+		if m.afterModuleEndBlock != nil {
+			m.afterModuleEndBlock(moduleName)
+		}
 
 		// use these validator updates if provided, the module manager assumes
 		// only one module will update the validator set
