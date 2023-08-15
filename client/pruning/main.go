@@ -76,7 +76,7 @@ func PruningCmd(appCreator servertypes.AppCreator) *cobra.Command {
 			}
 
 			var pruningHeights []int64
-			for height := int64(1); height < latestHeight; height++ {
+			for height := int64(pruningOptions.PruningStartHeight); height < latestHeight; height++ {
 				if height < latestHeight-int64(pruningOptions.KeepRecent) {
 					pruningHeights = append(pruningHeights, height)
 				}
@@ -102,6 +102,7 @@ func PruningCmd(appCreator servertypes.AppCreator) *cobra.Command {
 
 	cmd.Flags().String(flags.FlagHome, "", "The database home directory")
 	cmd.Flags().String(FlagAppDBBackend, "", "The type of database for application and snapshots databases")
+	cmd.Flags().Uint64(pruningtypes.PruningOptionStartHeight, 1, "Start height to prune from")
 	cmd.Flags().String(server.FlagPruning, pruningtypes.PruningOptionDefault, "Pruning strategy (default|nothing|everything|custom)")
 	cmd.Flags().Uint64(server.FlagPruningKeepRecent, 0, "Number of recent heights to keep on disk (ignored if pruning is not 'custom')")
 	cmd.Flags().Uint64(server.FlagPruningInterval, 10,

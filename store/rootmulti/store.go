@@ -593,6 +593,7 @@ func (rs *Store) PruneStores(clearPruningManager bool, pruningHeights []int64) (
 
 		store = rs.GetCommitKVStore(key)
 
+		fmt.Printf("pruning for store: %+v\n", key.Name())
 		err := store.(*iavl.Store).DeleteVersions(pruningHeights...)
 		if err == nil {
 			continue
