@@ -96,6 +96,14 @@ func SetChainID(chainID string) func(*BaseApp) {
 	return func(app *BaseApp) { app.chainID = chainID }
 }
 
+func (app *BaseApp) SetChainID(chainID string) {
+	if app.sealed {
+		panic("SetChainID() on sealed BaseApp")
+	}
+
+	app.chainID = chainID
+}
+
 func (app *BaseApp) SetName(name string) {
 	if app.sealed {
 		panic("SetName() on sealed BaseApp")
