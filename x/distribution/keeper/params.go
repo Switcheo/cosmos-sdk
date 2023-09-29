@@ -36,7 +36,7 @@ func (k Keeper) SetParams(ctx sdk.Context, params types.Params) error {
 }
 
 // GetCommunityTax returns the current distribution community tax.
-func (k Keeper) GetCommunityTax(ctx sdk.Context) math.LegacyDec {
+func (k Keeper) GetCommunityTax(ctx sdk.Context) math.Dec {
 	return k.GetParams(ctx).CommunityTax
 }
 

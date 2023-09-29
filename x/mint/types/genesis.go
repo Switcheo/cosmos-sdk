@@ -13,7 +13,7 @@ import (
 type InflationCalculationFn func(ctx sdk.Context, minter Minter, params Params, bondedRatio sdk.Dec) sdk.Dec
 
 // DefaultInflationCalculationFn is the default function used to calculate inflation.
-func DefaultInflationCalculationFn(_ sdk.Context, minter Minter, params Params, bondedRatio sdk.Dec) math.LegacyDec {
+func DefaultInflationCalculationFn(_ sdk.Context, minter Minter, params Params, bondedRatio sdk.Dec) math.Dec {
 	return minter.NextInflationRate(params, bondedRatio)
 }
 

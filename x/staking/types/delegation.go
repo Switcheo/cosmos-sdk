@@ -73,7 +73,7 @@ func (d Delegation) GetValidatorAddr() sdk.ValAddress {
 	}
 	return addr
 }
-func (d Delegation) GetShares() math.LegacyDec { return d.Shares }
+func (d Delegation) GetShares() math.Dec { return d.Shares }
 
 // String returns a human readable string representation of a Delegation.
 func (d Delegation) String() string {

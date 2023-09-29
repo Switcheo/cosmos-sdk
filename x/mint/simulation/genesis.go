@@ -23,27 +23,27 @@ const (
 )
 
 // GenInflation randomized Inflation
-func GenInflation(r *rand.Rand) math.LegacyDec {
+func GenInflation(r *rand.Rand) math.Dec {
 	return sdk.NewDecWithPrec(int64(r.Intn(99)), 2)
 }
 
 // GenInflationRateChange randomized InflationRateChange
-func GenInflationRateChange(r *rand.Rand) math.LegacyDec {
+func GenInflationRateChange(r *rand.Rand) math.Dec {
 	return sdk.NewDecWithPrec(int64(r.Intn(99)), 2)
 }
 
 // GenInflationMax randomized InflationMax
-func GenInflationMax(r *rand.Rand) math.LegacyDec {
+func GenInflationMax(r *rand.Rand) math.Dec {
 	return sdk.NewDecWithPrec(20, 2)
 }
 
 // GenInflationMin randomized InflationMin
-func GenInflationMin(r *rand.Rand) math.LegacyDec {
+func GenInflationMin(r *rand.Rand) math.Dec {
 	return sdk.NewDecWithPrec(7, 2)
 }
 
 // GenGoalBonded randomized GoalBonded
-func GenGoalBonded(r *rand.Rand) math.LegacyDec {
+func GenGoalBonded(r *rand.Rand) math.Dec {
 	return sdk.NewDecWithPrec(67, 2)
 }
 
