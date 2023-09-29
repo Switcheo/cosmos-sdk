@@ -856,7 +856,7 @@ func (d *Dec) UnmarshalAmino(bz []byte) error { return d.Unmarshal(bz) }
 // helpers
 
 // test if two decimal arrays are equal
-func DecsEqual(d1s, d2s []Dec) bool {
+func LegacyDecsEqual(d1s, d2s []Dec) bool {
 	if len(d1s) != len(d2s) {
 		return false
 	}
@@ -886,11 +886,11 @@ func LegacyMaxDec(d1, d2 Dec) Dec {
 }
 
 // intended to be used with require/assert:  require.True(DecEq(...))
-func DecEq(t *testing.T, exp, got Dec) (*testing.T, bool, string, string, string) {
+func LegacyDecEq(t *testing.T, exp, got Dec) (*testing.T, bool, string, string, string) {
 	return t, exp.Equal(got), "expected:\t%v\ngot:\t\t%v", exp.String(), got.String()
 }
 
-func DecApproxEq(t *testing.T, d1 Dec, d2 Dec, tol Dec) (*testing.T, bool, string, string, string) {
+func LegacyDecApproxEq(t *testing.T, d1 Dec, d2 Dec, tol Dec) (*testing.T, bool, string, string, string) {
 	diff := d1.Sub(d2).Abs()
 	return t, diff.LTE(tol), "expected |d1 - d2| <:\t%v\ngot |d1 - d2| = \t\t%v", tol.String(), diff.String()
 }

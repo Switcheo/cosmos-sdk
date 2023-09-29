@@ -37,7 +37,7 @@ func (ip IntProto) String() string {
 }
 
 type (
-	Dec = sdkmath.LegacyDec
+	Dec = sdkmath.Dec
 )
 
 const (
