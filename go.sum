@@ -217,8 +217,8 @@ github.com/OneOfOne/xxhash v1.2.2 h1:KMrpdQIwFcEqXDklaen+P1axHaj9BSKzvpUUfnHldSE
 github.com/OneOfOne/xxhash v1.2.2/go.mod h1:HSdplMjZKSmBqAxg5vPj2TmRDmfkzw+cTzAElWljhcU=
 github.com/Shopify/sarama v1.19.0/go.mod h1:FVkBWblsNy7DGZRfXLU0O9RCGt5g3g3yEuWXgklEdEo=
 github.com/Shopify/toxiproxy v2.1.4+incompatible/go.mod h1:OXgGpZ6Cli1/URJOF1DMxUHB2q5Ap20/P/eIdh4G0pI=
-github.com/Switcheo/cosmos-sdk/math v0.0.0-20230929021337-c1f2c182d514 h1:SWMNa5m4+zdoFqanp40ih2Dgp+g8tKri5asdkOzrAIM=
-github.com/Switcheo/cosmos-sdk/math v0.0.0-20230929021337-c1f2c182d514/go.mod h1:An0MllWJY6PxibUpnwGk8jOm+a/qIxlKmL5Zyp9NnaM=
+github.com/Switcheo/cosmos-sdk/math v0.0.0-20230929021928-58bc39538dae h1:FfeYVQkMd/mbWs5UpBEyVH+A99OnDGW9qtdbkVZf01Y=
+github.com/Switcheo/cosmos-sdk/math v0.0.0-20230929021928-58bc39538dae/go.mod h1:An0MllWJY6PxibUpnwGk8jOm+a/qIxlKmL5Zyp9NnaM=
 github.com/Switcheo/iavl v0.20.1-0.20230907092650-a292b5c6f6ae h1:HGJubAA6rYMgssNUf+nq+qQXLuda9YJfxPRGX8NULOI=
 github.com/Switcheo/iavl v0.20.1-0.20230907092650-a292b5c6f6ae/go.mod h1:WO7FyvaZJoH65+HFOsDir7xU9FWk2w9cHXNW1XHcl7A=
 github.com/VividCortex/gohistogram v1.0.0 h1:6+hBz+qvs0JOrrNhhmR7lFxo5sINxBCGXrdtl/UvroE=

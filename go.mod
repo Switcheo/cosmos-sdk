@@ -178,7 +178,7 @@ require (
 )
 
 replace (
-	cosmossdk.io/math => github.com/Switcheo/cosmos-sdk/math v0.0.0-20230929021337-c1f2c182d514
+	cosmossdk.io/math => github.com/Switcheo/cosmos-sdk/math v0.0.0-20230929021928-58bc39538dae
 	// use cosmos fork of keyring
 	github.com/99designs/keyring => github.com/cosmos/keyring v1.2.0
 	github.com/cosmos/iavl => github.com/Switcheo/iavl v0.20.1-0.20230907092650-a292b5c6f6ae
