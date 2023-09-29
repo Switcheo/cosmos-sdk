@@ -12,7 +12,7 @@ import (
 
 // NOTE: never use new(Dec) or else we will panic unmarshalling into the
 // nil embedded big.Int
-type LegacyDec struct {
+type Dec struct {
 	i *big.Int
 }
 
@@ -63,9 +63,9 @@ func precisionInt() *big.Int {
 	return new(big.Int).Set(precisionReuse)
 }
 
-func LegacyZeroDec() LegacyDec     { return LegacyDec{new(big.Int).Set(zeroInt)} }
-func LegacyOneDec() LegacyDec      { return LegacyDec{precisionInt()} }
-func LegacySmallestDec() LegacyDec { return LegacyDec{new(big.Int).Set(oneInt)} }
+func LegacyZeroDec() Dec     { return Dec{new(big.Int).Set(zeroInt)} }
+func LegacyOneDec() Dec      { return Dec{precisionInt()} }
+func LegacySmallestDec() Dec { return Dec{new(big.Int).Set(oneInt)} }
 
 // calculate the precision multiplier
 func calcPrecisionMultiplier(prec int64) *big.Int {
@@ -86,42 +86,42 @@ func precisionMultiplier(prec int64) *big.Int {
 }
 
 // create a new Dec from integer assuming whole number
-func LegacyNewDec(i int64) LegacyDec {
+func LegacyNewDec(i int64) Dec {
 	return LegacyNewDecWithPrec(i, 0)
 }
 
 // create a new Dec from integer with decimal place at prec
 // CONTRACT: prec <= Precision
-func LegacyNewDecWithPrec(i, prec int64) LegacyDec {
-	return LegacyDec{
+func LegacyNewDecWithPrec(i, prec int64) Dec {
+	return Dec{
 		new(big.Int).Mul(big.NewInt(i), precisionMultiplier(prec)),
 	}
 }
 
 // create a new Dec from big integer assuming whole numbers
 // CONTRACT: prec <= Precision
-func LegacyNewDecFromBigInt(i *big.Int) LegacyDec {
+func LegacyNewDecFromBigInt(i *big.Int) Dec {
 	return LegacyNewDecFromBigIntWithPrec(i, 0)
 }
 
 // create a new Dec from big integer assuming whole numbers
 // CONTRACT: prec <= Precision
-func LegacyNewDecFromBigIntWithPrec(i *big.Int, prec int64) LegacyDec {
-	return LegacyDec{
+func LegacyNewDecFromBigIntWithPrec(i *big.Int, prec int64) Dec {
+	return Dec{
 		new(big.Int).Mul(i, precisionMultiplier(prec)),
 	}
 }
 
 // create a new Dec from big integer assuming whole numbers
 // CONTRACT: prec <= Precision
-func LegacyNewDecFromInt(i Int) LegacyDec {
+func LegacyNewDecFromInt(i Int) Dec {
 	return LegacyNewDecFromIntWithPrec(i, 0)
 }
 
 // create a new Dec from big integer with decimal place at prec
 // CONTRACT: prec <= Precision
-func LegacyNewDecFromIntWithPrec(i Int, prec int64) LegacyDec {
-	return LegacyDec{
+func LegacyNewDecFromIntWithPrec(i Int, prec int64) Dec {
+	return Dec{
 		new(big.Int).Mul(i.BigInt(), precisionMultiplier(prec)),
 	}
 }
@@ -142,9 +142,9 @@ func LegacyNewDecFromIntWithPrec(i Int, prec int64) LegacyDec {
 // are provided in the string than the constant Precision.
 //
 // CONTRACT - This function does not mutate the input str.
-func LegacyNewDecFromStr(str string) (LegacyDec, error) {
+func LegacyNewDecFromStr(str string) (Dec, error) {
 	if len(str) == 0 {
-		return LegacyDec{}, fmt.Errorf("%s: %w", str, ErrLegacyEmptyDecimalStr)
+		return Dec{}, fmt.Errorf("%s: %w", str, ErrLegacyEmptyDecimalStr)
 	}
 
 	// first extract any negative symbol
@@ -155,7 +155,7 @@ func LegacyNewDecFromStr(str string) (LegacyDec, error) {
 	}
 
 	if len(str) == 0 {
-		return LegacyDec{}, fmt.Errorf("%s: %w", str, ErrLegacyEmptyDecimalStr)
+		return Dec{}, fmt.Errorf("%s: %w", str, ErrLegacyEmptyDecimalStr)
 	}
 
 	strs := strings.Split(str, ".")
@@ -165,15 +165,15 @@ func LegacyNewDecFromStr(str string) (LegacyDec, error) {
 	if len(strs) == 2 { // has a decimal place
 		lenDecs = len(strs[1])
 		if lenDecs == 0 || len(combinedStr) == 0 {
-			return LegacyDec{}, ErrLegacyInvalidDecimalLength
+			return Dec{}, ErrLegacyInvalidDecimalLength
 		}
 		combinedStr += strs[1]
 	} else if len(strs) > 2 {
-		return LegacyDec{}, ErrLegacyInvalidDecimalStr
+		return Dec{}, ErrLegacyInvalidDecimalStr
 	}
 
 	if lenDecs > LegacyPrecision {
-		return LegacyDec{}, fmt.Errorf("value '%s' exceeds max precision by %d decimal places: max precision %d", str, LegacyPrecision-lenDecs, LegacyPrecision)
+		return Dec{}, fmt.Errorf("value '%s' exceeds max precision by %d decimal places: max precision %d", str, LegacyPrecision-lenDecs, LegacyPrecision)
 	}
 
 	// add some extra zero's to correct to the Precision factor
@@ -183,20 +183,20 @@ func LegacyNewDecFromStr(str string) (LegacyDec, error) {
 
 	combined, ok := new(big.Int).SetString(combinedStr, 10) // base 10
 	if !ok {
-		return LegacyDec{}, fmt.Errorf("failed to set decimal string with base 10: %s", combinedStr)
+		return Dec{}, fmt.Errorf("failed to set decimal string with base 10: %s", combinedStr)
 	}
 	if combined.BitLen() > maxDecBitLen {
-		return LegacyDec{}, fmt.Errorf("decimal '%s' out of range; bitLen: got %d, max %d", str, combined.BitLen(), maxDecBitLen)
+		return Dec{}, fmt.Errorf("decimal '%s' out of range; bitLen: got %d, max %d", str, combined.BitLen(), maxDecBitLen)
 	}
 	if neg {
 		combined = new(big.Int).Neg(combined)
 	}
 
-	return LegacyDec{combined}, nil
+	return Dec{combined}, nil
 }
 
 // Decimal from string, panic on error
-func LegacyMustNewDecFromStr(s string) LegacyDec {
+func LegacyMustNewDecFromStr(s string) Dec {
 	dec, err := LegacyNewDecFromStr(s)
 	if err != nil {
 		panic(err)
@@ -204,23 +204,23 @@ func LegacyMustNewDecFromStr(s string) LegacyDec {
 	return dec
 }
 
-func (d LegacyDec) IsNil() bool                { return d.i == nil }                       // is decimal nil
-func (d LegacyDec) IsZero() bool               { return (d.i).Sign() == 0 }                // is equal to zero
-func (d LegacyDec) IsNegative() bool           { return (d.i).Sign() == -1 }               // is negative
-func (d LegacyDec) IsPositive() bool           { return (d.i).Sign() == 1 }                // is positive
-func (d LegacyDec) Equal(d2 LegacyDec) bool    { return (d.i).Cmp(d2.i) == 0 }             // equal decimals
-func (d LegacyDec) GT(d2 LegacyDec) bool       { return (d.i).Cmp(d2.i) > 0 }              // greater than
-func (d LegacyDec) GTE(d2 LegacyDec) bool      { return (d.i).Cmp(d2.i) >= 0 }             // greater than or equal
-func (d LegacyDec) LT(d2 LegacyDec) bool       { return (d.i).Cmp(d2.i) < 0 }              // less than
-func (d LegacyDec) LTE(d2 LegacyDec) bool      { return (d.i).Cmp(d2.i) <= 0 }             // less than or equal
-func (d LegacyDec) Neg() LegacyDec             { return LegacyDec{new(big.Int).Neg(d.i)} } // reverse the decimal sign
-func (d LegacyDec) NegMut() LegacyDec          { d.i.Neg(d.i); return d }                  // reverse the decimal sign, mutable
-func (d LegacyDec) Abs() LegacyDec             { return LegacyDec{new(big.Int).Abs(d.i)} } // absolute value
-func (d LegacyDec) Set(d2 LegacyDec) LegacyDec { d.i.Set(d2.i); return d }                 // set to existing dec value
-func (d LegacyDec) Clone() LegacyDec           { return LegacyDec{new(big.Int).Set(d.i)} } // clone new dec
+func (d Dec) IsNil() bool       { return d.i == nil }                 // is decimal nil
+func (d Dec) IsZero() bool      { return (d.i).Sign() == 0 }          // is equal to zero
+func (d Dec) IsNegative() bool  { return (d.i).Sign() == -1 }         // is negative
+func (d Dec) IsPositive() bool  { return (d.i).Sign() == 1 }          // is positive
+func (d Dec) Equal(d2 Dec) bool { return (d.i).Cmp(d2.i) == 0 }       // equal decimals
+func (d Dec) GT(d2 Dec) bool    { return (d.i).Cmp(d2.i) > 0 }        // greater than
+func (d Dec) GTE(d2 Dec) bool   { return (d.i).Cmp(d2.i) >= 0 }       // greater than or equal
+func (d Dec) LT(d2 Dec) bool    { return (d.i).Cmp(d2.i) < 0 }        // less than
+func (d Dec) LTE(d2 Dec) bool   { return (d.i).Cmp(d2.i) <= 0 }       // less than or equal
+func (d Dec) Neg() Dec          { return Dec{new(big.Int).Neg(d.i)} } // reverse the decimal sign
+func (d Dec) NegMut() Dec       { d.i.Neg(d.i); return d }            // reverse the decimal sign, mutable
+func (d Dec) Abs() Dec          { return Dec{new(big.Int).Abs(d.i)} } // absolute value
+func (d Dec) Set(d2 Dec) Dec    { d.i.Set(d2.i); return d }           // set to existing dec value
+func (d Dec) Clone() Dec        { return Dec{new(big.Int).Set(d.i)} } // clone new dec
 
 // BigInt returns a copy of the underlying big.Int.
-func (d LegacyDec) BigInt() *big.Int {
+func (d Dec) BigInt() *big.Int {
 	if d.IsNil() {
 		return nil
 	}
@@ -229,34 +229,34 @@ func (d LegacyDec) BigInt() *big.Int {
 	return cp.Set(d.i)
 }
 
-func (d LegacyDec) ImmutOp(op func(LegacyDec, LegacyDec) LegacyDec, d2 LegacyDec) LegacyDec {
+func (d Dec) ImmutOp(op func(Dec, Dec) Dec, d2 Dec) Dec {
 	return op(d.Clone(), d2)
 }
 
-func (d LegacyDec) ImmutOpInt(op func(LegacyDec, Int) LegacyDec, d2 Int) LegacyDec {
+func (d Dec) ImmutOpInt(op func(Dec, Int) Dec, d2 Int) Dec {
 	return op(d.Clone(), d2)
 }
 
-func (d LegacyDec) ImmutOpInt64(op func(LegacyDec, int64) LegacyDec, d2 int64) LegacyDec {
+func (d Dec) ImmutOpInt64(op func(Dec, int64) Dec, d2 int64) Dec {
 	// TODO: use already allocated operand bigint to avoid
 	// newint each time, add mutex for race condition
 	// Issue: https://github.com/cosmos/cosmos-sdk/issues/11166
 	return op(d.Clone(), d2)
 }
 
-func (d LegacyDec) SetInt64(i int64) LegacyDec {
+func (d Dec) SetInt64(i int64) Dec {
 	d.i.SetInt64(i)
 	d.i.Mul(d.i, precisionReuse)
 	return d
 }
 
 // addition
-func (d LegacyDec) Add(d2 LegacyDec) LegacyDec {
-	return d.ImmutOp(LegacyDec.AddMut, d2)
+func (d Dec) Add(d2 Dec) Dec {
+	return d.ImmutOp(Dec.AddMut, d2)
 }
 
 // mutable addition
-func (d LegacyDec) AddMut(d2 LegacyDec) LegacyDec {
+func (d Dec) AddMut(d2 Dec) Dec {
 	d.i.Add(d.i, d2.i)
 
 	if d.i.BitLen() > maxDecBitLen {
@@ -266,12 +266,12 @@ func (d LegacyDec) AddMut(d2 LegacyDec) LegacyDec {
 }
 
 // subtraction
-func (d LegacyDec) Sub(d2 LegacyDec) LegacyDec {
-	return d.ImmutOp(LegacyDec.SubMut, d2)
+func (d Dec) Sub(d2 Dec) Dec {
+	return d.ImmutOp(Dec.SubMut, d2)
 }
 
 // mutable subtraction
-func (d LegacyDec) SubMut(d2 LegacyDec) LegacyDec {
+func (d Dec) SubMut(d2 Dec) Dec {
 	d.i.Sub(d.i, d2.i)
 
 	if d.i.BitLen() > maxDecBitLen {
@@ -281,12 +281,12 @@ func (d LegacyDec) SubMut(d2 LegacyDec) LegacyDec {
 }
 
 // multiplication
-func (d LegacyDec) Mul(d2 LegacyDec) LegacyDec {
-	return d.ImmutOp(LegacyDec.MulMut, d2)
+func (d Dec) Mul(d2 Dec) Dec {
+	return d.ImmutOp(Dec.MulMut, d2)
 }
 
 // mutable multiplication
-func (d LegacyDec) MulMut(d2 LegacyDec) LegacyDec {
+func (d Dec) MulMut(d2 Dec) Dec {
 	d.i.Mul(d.i, d2.i)
 	chopped := chopPrecisionAndRound(d.i)
 
@@ -298,12 +298,12 @@ func (d LegacyDec) MulMut(d2 LegacyDec) LegacyDec {
 }
 
 // multiplication truncate
-func (d LegacyDec) MulTruncate(d2 LegacyDec) LegacyDec {
-	return d.ImmutOp(LegacyDec.MulTruncateMut, d2)
+func (d Dec) MulTruncate(d2 Dec) Dec {
+	return d.ImmutOp(Dec.MulTruncateMut, d2)
 }
 
 // mutable multiplication truncage
-func (d LegacyDec) MulTruncateMut(d2 LegacyDec) LegacyDec {
+func (d Dec) MulTruncateMut(d2 Dec) Dec {
 	d.i.Mul(d.i, d2.i)
 	chopPrecisionAndTruncate(d.i)
 
@@ -314,11 +314,11 @@ func (d LegacyDec) MulTruncateMut(d2 LegacyDec) LegacyDec {
 }
 
 // multiplication
-func (d LegacyDec) MulInt(i Int) LegacyDec {
-	return d.ImmutOpInt(LegacyDec.MulIntMut, i)
+func (d Dec) MulInt(i Int) Dec {
+	return d.ImmutOpInt(Dec.MulIntMut, i)
 }
 
-func (d LegacyDec) MulIntMut(i Int) LegacyDec {
+func (d Dec) MulIntMut(i Int) Dec {
 	d.i.Mul(d.i, i.BigInt())
 	if d.i.BitLen() > maxDecBitLen {
 		panic("Int overflow")
@@ -327,11 +327,11 @@ func (d LegacyDec) MulIntMut(i Int) LegacyDec {
 }
 
 // MulInt64 - multiplication with int64
-func (d LegacyDec) MulInt64(i int64) LegacyDec {
-	return d.ImmutOpInt64(LegacyDec.MulInt64Mut, i)
+func (d Dec) MulInt64(i int64) Dec {
+	return d.ImmutOpInt64(Dec.MulInt64Mut, i)
 }
 
-func (d LegacyDec) MulInt64Mut(i int64) LegacyDec {
+func (d Dec) MulInt64Mut(i int64) Dec {
 	d.i.Mul(d.i, big.NewInt(i))
 
 	if d.i.BitLen() > maxDecBitLen {
@@ -341,14 +341,14 @@ func (d LegacyDec) MulInt64Mut(i int64) LegacyDec {
 }
 
 // quotient
-func (d LegacyDec) Quo(d2 LegacyDec) LegacyDec {
-	return d.ImmutOp(LegacyDec.QuoMut, d2)
+func (d Dec) Quo(d2 Dec) Dec {
+	return d.ImmutOp(Dec.QuoMut, d2)
 }
 
 var squaredPrecisionReuse = new(big.Int).Mul(precisionReuse, precisionReuse)
 
 // mutable quotient
-func (d LegacyDec) QuoMut(d2 LegacyDec) LegacyDec {
+func (d Dec) QuoMut(d2 Dec) Dec {
 	// multiply by precision twice
 	d.i.Mul(d.i, squaredPrecisionReuse)
 	d.i.Quo(d.i, d2.i)
@@ -361,12 +361,12 @@ func (d LegacyDec) QuoMut(d2 LegacyDec) LegacyDec {
 }
 
 // quotient truncate
-func (d LegacyDec) QuoTruncate(d2 LegacyDec) LegacyDec {
-	return d.ImmutOp(LegacyDec.QuoTruncateMut, d2)
+func (d Dec) QuoTruncate(d2 Dec) Dec {
+	return d.ImmutOp(Dec.QuoTruncateMut, d2)
 }
 
 // mutable quotient truncate
-func (d LegacyDec) QuoTruncateMut(d2 LegacyDec) LegacyDec {
+func (d Dec) QuoTruncateMut(d2 Dec) Dec {
 	// multiply precision twice
 	d.i.Mul(d.i, squaredPrecisionReuse)
 	d.i.Quo(d.i, d2.i)
@@ -379,12 +379,12 @@ func (d LegacyDec) QuoTruncateMut(d2 LegacyDec) LegacyDec {
 }
 
 // quotient, round up
-func (d LegacyDec) QuoRoundUp(d2 LegacyDec) LegacyDec {
-	return d.ImmutOp(LegacyDec.QuoRoundupMut, d2)
+func (d Dec) QuoRoundUp(d2 Dec) Dec {
+	return d.ImmutOp(Dec.QuoRoundupMut, d2)
 }
 
 // mutable quotient, round up
-func (d LegacyDec) QuoRoundupMut(d2 LegacyDec) LegacyDec {
+func (d Dec) QuoRoundupMut(d2 Dec) Dec {
 	// multiply precision twice
 	d.i.Mul(d.i, squaredPrecisionReuse)
 	d.i.Quo(d.i, d2.i)
@@ -397,21 +397,21 @@ func (d LegacyDec) QuoRoundupMut(d2 LegacyDec) LegacyDec {
 }
 
 // quotient
-func (d LegacyDec) QuoInt(i Int) LegacyDec {
-	return d.ImmutOpInt(LegacyDec.QuoIntMut, i)
+func (d Dec) QuoInt(i Int) Dec {
+	return d.ImmutOpInt(Dec.QuoIntMut, i)
 }
 
-func (d LegacyDec) QuoIntMut(i Int) LegacyDec {
+func (d Dec) QuoIntMut(i Int) Dec {
 	d.i.Quo(d.i, i.BigInt())
 	return d
 }
 
 // QuoInt64 - quotient with int64
-func (d LegacyDec) QuoInt64(i int64) LegacyDec {
-	return d.ImmutOpInt64(LegacyDec.QuoInt64Mut, i)
+func (d Dec) QuoInt64(i int64) Dec {
+	return d.ImmutOpInt64(Dec.QuoInt64Mut, i)
 }
 
-func (d LegacyDec) QuoInt64Mut(i int64) LegacyDec {
+func (d Dec) QuoInt64Mut(i int64) Dec {
 	d.i.Quo(d.i, big.NewInt(i))
 	return d
 }
@@ -422,7 +422,7 @@ func (d LegacyDec) QuoInt64Mut(i int64) LegacyDec {
 // approximate answer.  It returns `|d|.ApproxRoot() * -1` if input is negative.
 // A maximum number of 100 iterations is used a backup boundary condition for
 // cases where the answer never converges enough to satisfy the main condition.
-func (d LegacyDec) ApproxRoot(root uint64) (guess LegacyDec, err error) {
+func (d Dec) ApproxRoot(root uint64) (guess Dec, err error) {
 	defer func() {
 		if r := recover(); r != nil {
 			var ok bool
@@ -464,12 +464,12 @@ func (d LegacyDec) ApproxRoot(root uint64) (guess LegacyDec, err error) {
 }
 
 // Power returns a the result of raising to a positive integer power
-func (d LegacyDec) Power(power uint64) LegacyDec {
-	res := LegacyDec{new(big.Int).Set(d.i)}
+func (d Dec) Power(power uint64) Dec {
+	res := Dec{new(big.Int).Set(d.i)}
 	return res.PowerMut(power)
 }
 
-func (d LegacyDec) PowerMut(power uint64) LegacyDec {
+func (d Dec) PowerMut(power uint64) Dec {
 	if power == 0 {
 		d.SetInt64(1)
 		return d
@@ -489,24 +489,24 @@ func (d LegacyDec) PowerMut(power uint64) LegacyDec {
 
 // ApproxSqrt is a wrapper around ApproxRoot for the common special case
 // of finding the square root of a number. It returns -(sqrt(abs(d)) if input is negative.
-func (d LegacyDec) ApproxSqrt() (LegacyDec, error) {
+func (d Dec) ApproxSqrt() (Dec, error) {
 	return d.ApproxRoot(2)
 }
 
 // is integer, e.g. decimals are zero
-func (d LegacyDec) IsInteger() bool {
+func (d Dec) IsInteger() bool {
 	return new(big.Int).Rem(d.i, precisionReuse).Sign() == 0
 }
 
 // format decimal state
-func (d LegacyDec) Format(s fmt.State, verb rune) {
+func (d Dec) Format(s fmt.State, verb rune) {
 	_, err := s.Write([]byte(d.String()))
 	if err != nil {
 		panic(err)
 	}
 }
 
-func (d LegacyDec) String() string {
+func (d Dec) String() string {
 	if d.i == nil {
 		return d.i.String()
 	}
@@ -560,13 +560,13 @@ func (d LegacyDec) String() string {
 
 // Float64 returns the float64 representation of a Dec.
 // Will return the error if the conversion failed.
-func (d LegacyDec) Float64() (float64, error) {
+func (d Dec) Float64() (float64, error) {
 	return strconv.ParseFloat(d.String(), 64)
 }
 
 // MustFloat64 returns the float64 representation of a Dec.
 // Would panic if the conversion failed.
-func (d LegacyDec) MustFloat64() float64 {
+func (d Dec) MustFloat64() float64 {
 	if value, err := strconv.ParseFloat(d.String(), 64); err != nil {
 		panic(err)
 	} else {
@@ -647,7 +647,7 @@ func chopPrecisionAndRoundNonMutative(d *big.Int) *big.Int {
 }
 
 // RoundInt64 rounds the decimal using bankers rounding
-func (d LegacyDec) RoundInt64() int64 {
+func (d Dec) RoundInt64() int64 {
 	chopped := chopPrecisionAndRoundNonMutative(d.i)
 	if !chopped.IsInt64() {
 		panic("Int64() out of bound")
@@ -656,7 +656,7 @@ func (d LegacyDec) RoundInt64() int64 {
 }
 
 // RoundInt round the decimal using bankers rounding
-func (d LegacyDec) RoundInt() Int {
+func (d Dec) RoundInt() Int {
 	return NewIntFromBigInt(chopPrecisionAndRoundNonMutative(d.i))
 }
 
@@ -673,7 +673,7 @@ func chopPrecisionAndTruncateNonMutative(d *big.Int) *big.Int {
 }
 
 // TruncateInt64 truncates the decimals from the number and returns an int64
-func (d LegacyDec) TruncateInt64() int64 {
+func (d Dec) TruncateInt64() int64 {
 	chopped := chopPrecisionAndTruncateNonMutative(d.i)
 	if !chopped.IsInt64() {
 		panic("Int64() out of bound")
@@ -682,18 +682,18 @@ func (d LegacyDec) TruncateInt64() int64 {
 }
 
 // TruncateInt truncates the decimals from the number and returns an Int
-func (d LegacyDec) TruncateInt() Int {
+func (d Dec) TruncateInt() Int {
 	return NewIntFromBigInt(chopPrecisionAndTruncateNonMutative(d.i))
 }
 
 // TruncateDec truncates the decimals from the number and returns a Dec
-func (d LegacyDec) TruncateDec() LegacyDec {
+func (d Dec) TruncateDec() Dec {
 	return LegacyNewDecFromBigInt(chopPrecisionAndTruncateNonMutative(d.i))
 }
 
 // Ceil returns the smallest interger value (as a decimal) that is greater than
 // or equal to the given decimal.
-func (d LegacyDec) Ceil() LegacyDec {
+func (d Dec) Ceil() Dec {
 	tmp := new(big.Int).Set(d.i)
 
 	quo, rem := tmp, big.NewInt(0)
@@ -713,7 +713,7 @@ func (d LegacyDec) Ceil() LegacyDec {
 
 // MaxSortableDec is the largest Dec that can be passed into SortableDecBytes()
 // Its negative form is the least Dec that can be passed in.
-var LegacyMaxSortableDec LegacyDec
+var LegacyMaxSortableDec Dec
 
 func init() {
 	LegacyMaxSortableDec = LegacyOneDec().Quo(LegacySmallestDec())
@@ -722,14 +722,14 @@ func init() {
 // ValidSortableDec ensures that a Dec is within the sortable bounds,
 // a Dec can't have a precision of less than 10^-18.
 // Max sortable decimal was set to the reciprocal of SmallestDec.
-func LegacyValidSortableDec(dec LegacyDec) bool {
+func LegacyValidSortableDec(dec Dec) bool {
 	return dec.Abs().LTE(LegacyMaxSortableDec)
 }
 
 // SortableDecBytes returns a byte slice representation of a Dec that can be sorted.
 // Left and right pads with 0s so there are 18 digits to left and right of the decimal point.
 // For this reason, there is a maximum and minimum value for this, enforced by ValidSortableDec.
-func LegacySortableDecBytes(dec LegacyDec) []byte {
+func LegacySortableDecBytes(dec Dec) []byte {
 	if !LegacyValidSortableDec(dec) {
 		panic("dec must be within bounds")
 	}
@@ -759,7 +759,7 @@ func init() {
 }
 
 // MarshalJSON marshals the decimal
-func (d LegacyDec) MarshalJSON() ([]byte, error) {
+func (d Dec) MarshalJSON() ([]byte, error) {
 	if d.i == nil {
 		return nilJSON, nil
 	}
@@ -767,7 +767,7 @@ func (d LegacyDec) MarshalJSON() ([]byte, error) {
 }
 
 // UnmarshalJSON defines custom decoding scheme
-func (d *LegacyDec) UnmarshalJSON(bz []byte) error {
+func (d *Dec) UnmarshalJSON(bz []byte) error {
 	if d.i == nil {
 		d.i = new(big.Int)
 	}
@@ -789,12 +789,12 @@ func (d *LegacyDec) UnmarshalJSON(bz []byte) error {
 }
 
 // MarshalYAML returns the YAML representation.
-func (d LegacyDec) MarshalYAML() (interface{}, error) {
+func (d Dec) MarshalYAML() (interface{}, error) {
 	return d.String(), nil
 }
 
 // Marshal implements the gogo proto custom type interface.
-func (d LegacyDec) Marshal() ([]byte, error) {
+func (d Dec) Marshal() ([]byte, error) {
 	if d.i == nil {
 		d.i = new(big.Int)
 	}
@@ -802,7 +802,7 @@ func (d LegacyDec) Marshal() ([]byte, error) {
 }
 
 // MarshalTo implements the gogo proto custom type interface.
-func (d *LegacyDec) MarshalTo(data []byte) (n int, err error) {
+func (d *Dec) MarshalTo(data []byte) (n int, err error) {
 	if d.i == nil {
 		d.i = new(big.Int)
 	}
@@ -822,7 +822,7 @@ func (d *LegacyDec) MarshalTo(data []byte) (n int, err error) {
 }
 
 // Unmarshal implements the gogo proto custom type interface.
-func (d *LegacyDec) Unmarshal(data []byte) error {
+func (d *Dec) Unmarshal(data []byte) error {
 	if len(data) == 0 {
 		d = nil
 		return nil
@@ -844,19 +844,19 @@ func (d *LegacyDec) Unmarshal(data []byte) error {
 }
 
 // Size implements the gogo proto custom type interface.
-func (d *LegacyDec) Size() int {
+func (d *Dec) Size() int {
 	bz, _ := d.Marshal()
 	return len(bz)
 }
 
 // Override Amino binary serialization by proxying to protobuf.
-func (d LegacyDec) MarshalAmino() ([]byte, error)   { return d.Marshal() }
-func (d *LegacyDec) UnmarshalAmino(bz []byte) error { return d.Unmarshal(bz) }
+func (d Dec) MarshalAmino() ([]byte, error)   { return d.Marshal() }
+func (d *Dec) UnmarshalAmino(bz []byte) error { return d.Unmarshal(bz) }
 
 // helpers
 
 // test if two decimal arrays are equal
-func LegacyDecsEqual(d1s, d2s []LegacyDec) bool {
+func DecsEqual(d1s, d2s []Dec) bool {
 	if len(d1s) != len(d2s) {
 		return false
 	}
@@ -870,7 +870,7 @@ func LegacyDecsEqual(d1s, d2s []LegacyDec) bool {
 }
 
 // minimum decimal between two
-func LegacyMinDec(d1, d2 LegacyDec) LegacyDec {
+func LegacyMinDec(d1, d2 Dec) Dec {
 	if d1.LT(d2) {
 		return d1
 	}
@@ -878,7 +878,7 @@ func LegacyMinDec(d1, d2 LegacyDec) LegacyDec {
 }
 
 // maximum decimal between two
-func LegacyMaxDec(d1, d2 LegacyDec) LegacyDec {
+func LegacyMaxDec(d1, d2 Dec) Dec {
 	if d1.LT(d2) {
 		return d2
 	}
@@ -886,11 +886,11 @@ func LegacyMaxDec(d1, d2 LegacyDec) LegacyDec {
 }
 
 // intended to be used with require/assert:  require.True(DecEq(...))
-func LegacyDecEq(t *testing.T, exp, got LegacyDec) (*testing.T, bool, string, string, string) {
+func DecEq(t *testing.T, exp, got Dec) (*testing.T, bool, string, string, string) {
 	return t, exp.Equal(got), "expected:\t%v\ngot:\t\t%v", exp.String(), got.String()
 }
 
-func LegacyDecApproxEq(t *testing.T, d1 LegacyDec, d2 LegacyDec, tol LegacyDec) (*testing.T, bool, string, string, string) {
+func DecApproxEq(t *testing.T, d1 Dec, d2 Dec, tol Dec) (*testing.T, bool, string, string, string) {
 	diff := d1.Sub(d2).Abs()
 	return t, diff.LTE(tol), "expected |d1 - d2| <:\t%v\ngot |d1 - d2| = \t\t%v", tol.String(), diff.String()
 }
