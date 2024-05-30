@@ -979,7 +979,7 @@ func (app *BaseApp) Commit() (*abci.ResponseCommit, error) {
 
 func (app *BaseApp) CreateOracleResultTx(req *abci.RequestCreateOracleResultTx) (*abci.ResponseCreateOracleResultTx, error) {
 	if app.createOracleResultTx != nil && app.prepareProposalState != nil {
-		return app.createOracleResultTx(app.prepareProposalState.ctx, req)
+		return app.createOracleResultTx(app.prepareProposalState.Context(), req)
 	}
 	return &abci.ResponseCreateOracleResultTx{}, fmt.Errorf("createOracleResultTx hook or prepareProposalState is not set")
 }
@@ -993,7 +993,7 @@ func (app *BaseApp) FetchOracleVotes(req *abci.RequestFetchOracleVotes) (*abci.R
 
 func (app *BaseApp) ValidateOracleVotes(req *abci.RequestValidateOracleVotes) (*abci.ResponseValidateOracleVotes, error) {
 	if app.validateOracleVotes != nil && app.processProposalState != nil {
-		return app.validateOracleVotes(app.processProposalState.ctx, req)
+		return app.validateOracleVotes(app.processProposalState.Context(), req)
 	}
 	return &abci.ResponseValidateOracleVotes{}, fmt.Errorf("validateOracleVotes hook or processProposalState is not set")
 }
