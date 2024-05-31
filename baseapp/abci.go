@@ -517,6 +517,20 @@ func (app *BaseApp) ProcessProposal(req *abci.RequestProcessProposal) (resp *abc
 		}
 	}()
 
+	// validate injected oracle votes, reject block proposal if validation fails
+	if len(req.Txs) > 0 {
+		res, err := app.ValidateOracleVotes(&abci.RequestValidateOracleVotes{OracleTx: req.Txs[0]})
+
+		if err != nil && res.Status == abci.ResponseValidateOracleVotes_ABSENT {
+			// oracleTx is not present, continue normal processProposal flow
+			app.logger.Error("error validating oracle votes:", "err", err)
+		} else if err != nil && res.Status == abci.ResponseValidateOracleVotes_PRESENT {
+			// oracleTx is present but it is invalid, reject block proposal
+			app.logger.Error("error validating oracle votes:", "err", err)
+			return &abci.ResponseProcessProposal{Status: abci.ResponseProcessProposal_REJECT}, nil
+		}
+	}
+
 	resp, err = app.processProposal(app.processProposalState.Context(), req)
 	if err != nil {
 		app.logger.Error("failed to process proposal", "height", req.Height, "time", req.Time, "hash", fmt.Sprintf("%X", req.Hash), "err", err)
