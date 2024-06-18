@@ -189,6 +189,9 @@ max-recv-msg-size = "{{ .GRPC.MaxRecvMsgSize }}"
 # The default value is math.MaxInt32.
 max-send-msg-size = "{{ .GRPC.MaxSendMsgSize }}"
 
+# EnableOracleGrpcAuth defines if the gRPC server for oracle votes communication should be ssl authenticated.
+enable-oracle-grpc-auth = "{{ .GRPC.EnableOracleGrpcAuth }}"
+
 ###############################################################################
 ###                        gRPC Web Configuration                           ###
 ###############################################################################
