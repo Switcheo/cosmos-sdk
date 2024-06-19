@@ -10,7 +10,7 @@ require (
 	github.com/cockroachdb/errors v1.11.1
 	github.com/cosmos/cosmos-proto v1.0.0-beta.4
 	github.com/cosmos/cosmos-sdk v0.50.1
-	github.com/spf13/cobra v1.8.0
+	github.com/spf13/cobra v1.8.1
 	github.com/spf13/pflag v1.0.5
 	google.golang.org/grpc v1.62.0
 	google.golang.org/protobuf v1.33.0
