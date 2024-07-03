@@ -60,3 +60,7 @@ type StakingHooks interface {
 	AfterValidatorCreated(ctx context.Context, valAddr sdk.ValAddress) error // Must be called when a validator is created
 	AfterDelegationModified(ctx context.Context, delAddr sdk.AccAddress, valAddr sdk.ValAddress) error
 }
+
+type FeeCollectorHook interface {
+	BeforeFeeCollectorSend(ctx context.Context, feeCollector sdk.ModuleAccountI) error
+}

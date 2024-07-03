@@ -180,3 +180,13 @@ func (h Hooks) BeforeDelegationRemoved(_ context.Context, _ sdk.AccAddress, _ sd
 func (h Hooks) AfterUnbondingInitiated(_ context.Context, _ uint64) error {
 	return nil
 }
+
+func (h Hooks) BeforeFeeCollectorSend(ctx context.Context, feeCollector sdk.ModuleAccountI) error {
+	if h.k.feeCollectorHook != nil {
+		err := h.k.feeCollectorHook.BeforeFeeCollectorSend(ctx, feeCollector)
+		if err != nil {
+			return err
+		}
+	}
+	return nil
+}

@@ -31,6 +31,7 @@ type Keeper struct {
 	FeePool collections.Item[types.FeePool]
 
 	feeCollectorName string // name of the FeeCollector ModuleAccount
+	feeCollectorHook types.FeeCollectorHook
 }
 
 // NewKeeper creates a new distribution Keeper instance
@@ -74,6 +75,17 @@ func (k Keeper) GetAuthority() string {
 func (k Keeper) Logger(ctx context.Context) log.Logger {
 	sdkCtx := sdk.UnwrapSDKContext(ctx)
 	return sdkCtx.Logger().With(log.ModuleKey, "x/"+types.ModuleName)
+}
+
+// SetFeeCollectorHook sets the hook
+func (k *Keeper) SetFeeCollectorHook(fch types.FeeCollectorHook) *Keeper {
+	if k.feeCollectorHook != nil {
+		panic("cannot set send hooks twice")
+	}
+
+	k.feeCollectorHook = fch
+
+	return k
 }
 
 // SetWithdrawAddr sets a new address that will receive the rewards upon withdrawal
