@@ -1012,6 +1012,13 @@ func (app *BaseApp) DoesOracleResultExist(req *abci.RequestDoesOracleResultExist
 	return &abci.ResponseDoesOracleResultExist{}, fmt.Errorf("doesOracleResultExist hook is not set")
 }
 
+func (app *BaseApp) DoesSubaccountBelongToVal(req *abci.RequestDoesSubaccountBelongToVal) (*abci.ResponseDoesSubaccountBelongToVal, error) {
+	if app.doesSubaccountBelongToVal != nil {
+		return app.doesSubaccountBelongToVal(context.Background(), req)
+	}
+	return &abci.ResponseDoesSubaccountBelongToVal{}, fmt.Errorf("doesSubaccountBelongToVal hook is not set")
+}
+
 func (app *BaseApp) ValidateOracleVotes(req *abci.RequestValidateOracleVotes) (*abci.ResponseValidateOracleVotes, error) {
 	if app.validateOracleVotes != nil && app.processProposalState != nil {
 		return app.validateOracleVotes(app.processProposalState.Context(), req)
