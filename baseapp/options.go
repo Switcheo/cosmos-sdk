@@ -268,12 +268,12 @@ func (app *BaseApp) SetDoesOracleResultExist(doesOracleResultExist sdk.DoesOracl
 	app.doesOracleResultExist = doesOracleResultExist
 }
 
-func (app *BaseApp) SetDoesSubaccountBelongToVal(doesSubaccountBelongToVal sdk.DoesSubaccountBelongToValHandler) {
+func (app *BaseApp) SetDoesSubAccountBelongToVal(doesSubAccountBelongToVal sdk.DoesSubAccountBelongToValHandler) {
 	if app.sealed {
-		panic("SetDoesSubaccountBelongToVal() on sealed BaseApp")
+		panic("SetDoesSubAccountBelongToVal() on sealed BaseApp")
 	}
 
-	app.doesSubaccountBelongToVal = doesSubaccountBelongToVal
+	app.doesSubAccountBelongToVal = doesSubAccountBelongToVal
 }
 
 func (app *BaseApp) SetValidateOracleVotes(validateOracleVotes sdk.ValidateOracleVotesHandler) {

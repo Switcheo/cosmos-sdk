@@ -56,8 +56,8 @@ func (w cometABCIWrapper) DoesOracleResultExist(_ context.Context, req *abci.Req
 	return w.app.DoesOracleResultExist(req)
 }
 
-func (w cometABCIWrapper) DoesSubaccountBelongToVal(_ context.Context, req *abci.RequestDoesSubaccountBelongToVal) (*abci.ResponseDoesSubaccountBelongToVal, error) {
-	return w.app.DoesSubaccountBelongToVal(req)
+func (w cometABCIWrapper) DoesSubAccountBelongToVal(_ context.Context, req *abci.RequestDoesSubAccountBelongToVal) (*abci.ResponseDoesSubAccountBelongToVal, error) {
+	return w.app.DoesSubAccountBelongToVal(req)
 }
 
 func (w cometABCIWrapper) ValidateOracleVotes(_ context.Context, req *abci.RequestValidateOracleVotes) (*abci.ResponseValidateOracleVotes, error) {

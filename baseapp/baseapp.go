@@ -205,7 +205,7 @@ type customMiddlewares struct {
 	createOracleResultTx      sdk.CreateOracleResultTxHandler
 	fetchOracleVotes          sdk.FetchOracleVotesHandler
 	doesOracleResultExist     sdk.DoesOracleResultExistHandler
-	doesSubaccountBelongToVal sdk.DoesSubaccountBelongToValHandler
+	doesSubAccountBelongToVal sdk.DoesSubAccountBelongToValHandler
 	validateOracleVotes       sdk.ValidateOracleVotesHandler
 
 	msgHandlerMiddleware sdk.MsgHandlerMiddleware // middleware that wraps msg handlers

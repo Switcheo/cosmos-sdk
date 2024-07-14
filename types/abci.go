@@ -32,7 +32,7 @@ type FetchOracleVotesHandler func(context.Context, *abci.RequestFetchOracleVotes
 
 type DoesOracleResultExistHandler func(context.Context, *abci.RequestDoesOracleResultExist) (*abci.ResponseDoesOracleResultExist, error)
 
-type DoesSubaccountBelongToValHandler func(context.Context, *abci.RequestDoesSubaccountBelongToVal) (*abci.ResponseDoesSubaccountBelongToVal, error)
+type DoesSubAccountBelongToValHandler func(context.Context, *abci.RequestDoesSubAccountBelongToVal) (*abci.ResponseDoesSubAccountBelongToVal, error)
 
 type ValidateOracleVotesHandler func(Context, *abci.RequestValidateOracleVotes) (*abci.ResponseValidateOracleVotes, error)
 
