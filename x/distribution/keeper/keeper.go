@@ -78,14 +78,12 @@ func (k Keeper) Logger(ctx context.Context) log.Logger {
 }
 
 // SetFeeCollectorHook sets the hook
-func (k *Keeper) SetFeeCollectorHook(fch types.FeeCollectorHook) *Keeper {
+func (k *Keeper) SetFeeCollectorHook(fch types.FeeCollectorHook) {
 	if k.feeCollectorHook != nil {
 		panic("cannot set send hooks twice")
 	}
 
 	k.feeCollectorHook = fch
-
-	return k
 }
 
 // SetWithdrawAddr sets a new address that will receive the rewards upon withdrawal
