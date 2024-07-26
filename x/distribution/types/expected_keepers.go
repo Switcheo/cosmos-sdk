@@ -61,6 +61,6 @@ type StakingHooks interface {
 	AfterDelegationModified(ctx context.Context, delAddr sdk.AccAddress, valAddr sdk.ValAddress) error
 }
 
-type FeeCollectorHook interface {
+type DistributionHook interface {
 	BeforeFeeCollectorSend(ctx context.Context, feeCollector sdk.ModuleAccountI) error
 }

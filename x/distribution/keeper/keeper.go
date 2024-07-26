@@ -25,13 +25,13 @@ type Keeper struct {
 	// the address capable of executing a MsgUpdateParams message. Typically, this
 	// should be the x/gov module account.
 	authority string
+	hooks     types.DistributionHook
 
 	Schema  collections.Schema
 	Params  collections.Item[types.Params]
 	FeePool collections.Item[types.FeePool]
 
 	feeCollectorName string // name of the FeeCollector ModuleAccount
-	feeCollectorHook types.FeeCollectorHook
 }
 
 // NewKeeper creates a new distribution Keeper instance
@@ -77,13 +77,12 @@ func (k Keeper) Logger(ctx context.Context) log.Logger {
 	return sdkCtx.Logger().With(log.ModuleKey, "x/"+types.ModuleName)
 }
 
-// SetFeeCollectorHook sets the hook
-func (k *Keeper) SetFeeCollectorHook(fch types.FeeCollectorHook) {
-	if k.feeCollectorHook != nil {
+// SetHooks sets the hook
+func (k *Keeper) SetHooks(h types.DistributionHook) {
+	if k.hooks != nil {
 		panic("cannot set send hooks twice")
 	}
-
-	k.feeCollectorHook = fch
+	k.hooks = h
 }
 
 // SetWithdrawAddr sets a new address that will receive the rewards upon withdrawal
