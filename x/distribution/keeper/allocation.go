@@ -19,7 +19,7 @@ func (k Keeper) AllocateTokens(ctx context.Context, totalPreviousPower int64, bo
 	// called in BeginBlock, collected fees will be from the previous block
 	// (and distributed to the previous proposer)
 	feeCollector := k.authKeeper.GetModuleAccount(ctx, k.feeCollectorName)
-	err := k.hooks.BeforeFeeCollectorSend(ctx, feeCollector)
+	err := k.hooks.BeforeFeeCollectorSend(ctx)
 	if err != nil {
 		return err
 	}

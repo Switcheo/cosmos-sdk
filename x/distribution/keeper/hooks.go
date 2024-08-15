@@ -181,9 +181,9 @@ func (h Hooks) AfterUnbondingInitiated(_ context.Context, _ uint64) error {
 	return nil
 }
 
-func (h Hooks) BeforeFeeCollectorSend(ctx context.Context, feeCollector sdk.ModuleAccountI) error {
+func (h Hooks) BeforeFeeCollectorSend(ctx context.Context) error {
 	if h.k.hooks != nil {
-		err := h.k.hooks.BeforeFeeCollectorSend(ctx, feeCollector)
+		err := h.k.hooks.BeforeFeeCollectorSend(ctx)
 		if err != nil {
 			return err
 		}
