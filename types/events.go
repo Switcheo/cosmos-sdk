@@ -22,6 +22,7 @@ type EventManagerI interface {
 	EmitTypedEvents(tevs ...proto.Message) error
 	EmitEvent(event Event)
 	EmitEvents(events Events)
+	SetEvents(events Events)
 }
 
 // ----------------------------------------------------------------------------
