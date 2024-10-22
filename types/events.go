@@ -54,6 +54,10 @@ func (em *EventManager) EmitEvents(events Events) {
 	em.events = em.events.AppendEvents(events)
 }
 
+func (em *EventManager) SetEvents(events Events) {
+	em.events = events
+}
+
 // ABCIEvents returns all stored Event objects as abci.Event objects.
 func (em EventManager) ABCIEvents() []abci.Event {
 	return em.events.ToABCIEvents()
