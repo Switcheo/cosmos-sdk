@@ -1032,8 +1032,9 @@ func (app *BaseApp) runTx(mode execMode, txBytes []byte) (gInfo sdk.GasInfo, res
 				msCache.Write()
 			}
 
-			if len(anteEvents) > 0 && (mode == execModeFinalize || mode == execModeSimulate) {
-				anteEvents = append(anteEvents, newCtx.EventManager().ABCIEvents()...)
+			refundEvents := newCtx.EventManager().ABCIEvents()
+			if len(refundEvents) > 0 && (mode == execModeFinalize || mode == execModeSimulate) {
+				anteEvents = append(anteEvents, refundEvents...)
 			}
 		}
 	}
