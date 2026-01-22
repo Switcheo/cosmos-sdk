@@ -178,7 +178,7 @@ replace (
 	// cosmossdk.io/math => github.com/Switcheo/cosmos-sdk/math v0.0.0-20231002062306-8360748679d2
 	// use cosmos fork of keyring
 	github.com/99designs/keyring => github.com/cosmos/keyring v1.2.0
-	github.com/cometbft/cometbft => github.com/Switcheo/cometbft v0.38.18-0.20260120081219-8a76e278cded
+	github.com/cometbft/cometbft => github.com/Switcheo/cometbft v0.38.13-0.20260122030036-50be25be0f29
 
 	// github.com/cosmos/iavl => github.com/Switcheo/iavl v0.20.1-0.20230907092650-a292b5c6f6ae
 	// dgrijalva/jwt-go is deprecated and doesn't receive security updates.

@@ -38,8 +38,8 @@ github.com/Nvveen/Gotty v0.0.0-20120604004816-cd527374f1e5 h1:TngWCqHvy9oXAN6lEV
 github.com/Nvveen/Gotty v0.0.0-20120604004816-cd527374f1e5/go.mod h1:lmUJ/7eu/Q8D7ML55dXQrVaamCz2vxCfdQBasLZfHKk=
 github.com/Shopify/sarama v1.19.0/go.mod h1:FVkBWblsNy7DGZRfXLU0O9RCGt5g3g3yEuWXgklEdEo=
 github.com/Shopify/toxiproxy v2.1.4+incompatible/go.mod h1:OXgGpZ6Cli1/URJOF1DMxUHB2q5Ap20/P/eIdh4G0pI=
-github.com/Switcheo/cometbft v0.38.18-0.20260120081219-8a76e278cded h1:9q4CKRd28le3BBrH9rxC2W64y2d6QtKfNDwmyZ8ucq0=
-github.com/Switcheo/cometbft v0.38.18-0.20260120081219-8a76e278cded/go.mod h1:qREF7+Fa4ha8DavLKUY4w1klemGX0u8SelFEDuVbhc8=
+github.com/Switcheo/cometbft v0.38.13-0.20260122030036-50be25be0f29 h1:MI6Vjsvpjxt4n7KgYYcqpZmFmrSwXA5AZk3RnBbNgbg=
+github.com/Switcheo/cometbft v0.38.13-0.20260122030036-50be25be0f29/go.mod h1:qREF7+Fa4ha8DavLKUY4w1klemGX0u8SelFEDuVbhc8=
 github.com/VividCortex/gohistogram v1.0.0 h1:6+hBz+qvs0JOrrNhhmR7lFxo5sINxBCGXrdtl/UvroE=
 github.com/VividCortex/gohistogram v1.0.0/go.mod h1:Pf5mBqqDxYaXu3hDrrU+w6nw50o/4+TcAqDqk/vUH7g=
 github.com/adlio/schema v1.3.6 h1:k1/zc2jNfeiZBA5aFTRy37jlBIuCkXCm0XmvpzCKI9I=
