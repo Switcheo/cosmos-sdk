@@ -12,11 +12,12 @@ import (
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	"github.com/cosmos/cosmos-sdk/server/config"
-	"github.com/cosmos/cosmos-sdk/server/grpc/gogoreflection"
-	reflection "github.com/cosmos/cosmos-sdk/server/grpc/reflection/v2alpha1"
+	// No reflection service is registered, so this server does not describe its own schema.
+	// These stay imported so that the proto registry is the same with or without it.
+	_ "github.com/cosmos/cosmos-sdk/server/grpc/gogoreflection"
+	_ "github.com/cosmos/cosmos-sdk/server/grpc/reflection/v2alpha1"
 	"github.com/cosmos/cosmos-sdk/server/types"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	_ "github.com/cosmos/cosmos-sdk/types/tx/amino" // Import amino.proto file for reflection
+	_ "github.com/cosmos/cosmos-sdk/types/tx/amino" // Import amino.proto file
 )
 
 // NewGRPCServer returns a correctly configured and initialized gRPC server.
@@ -39,31 +40,6 @@ func NewGRPCServer(clientCtx client.Context, app types.Application, cfg config.G
 	)
 
 	app.RegisterGRPCServer(grpcSrv)
-
-	// Reflection allows consumers to build dynamic clients that can write to any
-	// Cosmos SDK application without relying on application packages at compile
-	// time.
-	err := reflection.Register(grpcSrv, reflection.Config{
-		SigningModes: func() map[string]int32 {
-			supportedModes := clientCtx.TxConfig.SignModeHandler().SupportedModes()
-			modes := make(map[string]int32, len(supportedModes))
-			for _, m := range supportedModes {
-				modes[m.String()] = (int32)(m)
-			}
-
-			return modes
-		}(),
-		ChainID:           clientCtx.ChainID,
-		SdkConfig:         sdk.GetConfig(),
-		InterfaceRegistry: clientCtx.InterfaceRegistry,
-	})
-	if err != nil {
-		return nil, fmt.Errorf("failed to register reflection service: %w", err)
-	}
-
-	// Reflection allows external clients to see what services and methods
-	// the gRPC server exposes.
-	gogoreflection.Register(grpcSrv)
 
 	return grpcSrv, nil
 }

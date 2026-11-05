@@ -19,6 +19,15 @@ import (
 	sdk "github.com/cosmos/cosmos-sdk/types"
 )
 
+func TestGRPCQueryRouterHasNoReflection(t *testing.T) {
+	qr := baseapp.NewGRPCQueryRouter()
+	qr.SetInterfaceRegistry(testdata.NewTestInterfaceRegistry())
+
+	// ABCI queries and the gRPC server are both served from this router.
+	require.Nil(t, qr.Route("/cosmos.base.reflection.v1beta1.ReflectionService/ListAllInterfaces"))
+	require.Nil(t, qr.Route("/cosmos.base.reflection.v1beta1.ReflectionService/ListImplementations"))
+}
+
 func TestGRPCQueryRouter(t *testing.T) {
 	qr := baseapp.NewGRPCQueryRouter()
 	interfaceRegistry := testdata.NewTestInterfaceRegistry()

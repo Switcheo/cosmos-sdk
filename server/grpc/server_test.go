@@ -10,7 +10,9 @@ import (
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
+	"google.golang.org/grpc/status"
 
 	"github.com/cosmos/cosmos-sdk/client"
 	reflectionv1 "github.com/cosmos/cosmos-sdk/client/grpc/reflection"
@@ -104,49 +106,24 @@ func (s *IntegrationTestSuite) TestGRPCServer_BankBalance() {
 	s.Require().Equal([]string{"1"}, blockHeight)
 }
 
-func (s *IntegrationTestSuite) TestGRPCServer_Reflection() {
-	// Test server reflection
-	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
-	defer cancel()
-	// NOTE(fdymylja): we use grpcreflect because it solves imports too
-	// so that we can always assert that given a reflection server it is
-	// possible to fully query all the methods, without having any context
-	// on the proto registry
-	rc := grpcreflect.NewClientAuto(ctx, s.conn)
-
-	services, err := rc.ListServices()
-	s.Require().NoError(err)
-	s.Require().Greater(len(services), 0)
-
-	for _, svc := range services {
-		file, err := rc.FileContainingSymbol(svc)
-		s.Require().NoError(err)
-		sd := file.FindSymbol(svc)
-		s.Require().NotNil(sd)
-	}
-}
-
-func (s *IntegrationTestSuite) TestGRPCServer_InterfaceReflection() {
-	// this tests the application reflection capabilities and compatibility between v1 and v2
+func (s *IntegrationTestSuite) TestGRPCServer_NoReflection() {
+	// The server must not describe itself. Each service has to report Unimplemented,
+	// rather than an error that a transient failure could also produce.
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
 
-	clientV2 := reflectionv2.NewReflectionServiceClient(s.conn)
-	clientV1 := reflectionv1.NewReflectionServiceClient(s.conn)
-	codecDesc, err := clientV2.GetCodecDescriptor(ctx, nil)
-	s.Require().NoError(err)
+	services, err := grpcreflect.NewClientAuto(ctx, s.conn).ListServices()
+	s.Require().Error(err)
+	s.Require().Empty(services)
 
-	interfaces, err := clientV1.ListAllInterfaces(ctx, nil)
-	s.Require().NoError(err)
-	s.Require().Equal(len(codecDesc.Codec.Interfaces), len(interfaces.InterfaceNames))
-	s.Require().Equal(len(s.cfg.InterfaceRegistry.ListAllInterfaces()), len(codecDesc.Codec.Interfaces))
+	_, err = reflectionv2.NewReflectionServiceClient(s.conn).GetCodecDescriptor(ctx, &reflectionv2.GetCodecDescriptorRequest{})
+	s.Require().Equal(codes.Unimplemented, status.Code(err))
 
-	for _, iface := range interfaces.InterfaceNames {
-		impls, err := clientV1.ListImplementations(ctx, &reflectionv1.ListImplementationsRequest{InterfaceName: iface})
-		s.Require().NoError(err)
+	_, err = reflectionv2.NewReflectionServiceClient(s.conn).GetQueryServicesDescriptor(ctx, &reflectionv2.GetQueryServicesDescriptorRequest{})
+	s.Require().Equal(codes.Unimplemented, status.Code(err))
 
-		s.Require().ElementsMatch(impls.ImplementationMessageNames, s.cfg.InterfaceRegistry.ListImplementations(iface))
-	}
+	_, err = reflectionv1.NewReflectionServiceClient(s.conn).ListAllInterfaces(ctx, &reflectionv1.ListAllInterfacesRequest{})
+	s.Require().Equal(codes.Unimplemented, status.Code(err))
 }
 
 func (s *IntegrationTestSuite) TestGRPCServer_GetTxsEvent() {
