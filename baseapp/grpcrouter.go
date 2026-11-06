@@ -11,7 +11,7 @@ import (
 	"google.golang.org/protobuf/runtime/protoiface"
 
 	"github.com/cosmos/cosmos-sdk/baseapp/internal/protocompat"
-	"github.com/cosmos/cosmos-sdk/client/grpc/reflection"
+	_ "github.com/cosmos/cosmos-sdk/client/grpc/reflection" // keeps the proto registry unchanged; the service is not registered
 	"github.com/cosmos/cosmos-sdk/codec"
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -147,13 +147,9 @@ func (qrt *GRPCQueryRouter) registerHybridHandler(sd *grpc.ServiceDesc, method g
 	return nil
 }
 
-// SetInterfaceRegistry sets the interface registry for the router. This will
-// also register the interface reflection gRPC service.
+// SetInterfaceRegistry sets the interface registry for the router.
 func (qrt *GRPCQueryRouter) SetInterfaceRegistry(interfaceRegistry codectypes.InterfaceRegistry) {
 	// instantiate the codec
 	qrt.cdc = codec.NewProtoCodec(interfaceRegistry).GRPCCodec()
 	qrt.binaryCodec = codec.NewProtoCodec(interfaceRegistry)
-	// Once we have an interface registry, we can register the interface
-	// registry reflection gRPC service.
-	reflection.RegisterReflectionServiceServer(qrt, reflection.NewReflectionServiceServer(interfaceRegistry))
 }
