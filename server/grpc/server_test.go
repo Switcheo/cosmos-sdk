@@ -109,11 +109,16 @@ func (s *IntegrationTestSuite) TestGRPCServer_BankBalance() {
 func (s *IntegrationTestSuite) TestGRPCServer_NoReflection() {
 	// The server must not describe itself. Each service has to report Unimplemented,
 	// rather than an error that a transient failure could also produce.
+	//
+	// cosmos.reflection.v1 is not checked here: the server never registered it. An
+	// application registers it on its own query router, as runtime.App and simapp do.
 	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
 	defer cancel()
 
+	// grpcreflect tries grpc.reflection.v1 and falls back to v1alpha; this is the
+	// status of the last attempt.
 	services, err := grpcreflect.NewClientAuto(ctx, s.conn).ListServices()
-	s.Require().Error(err)
+	s.Require().Equal(codes.Unimplemented, status.Code(err), "%v", err)
 	s.Require().Empty(services)
 
 	_, err = reflectionv2.NewReflectionServiceClient(s.conn).GetCodecDescriptor(ctx, &reflectionv2.GetCodecDescriptorRequest{})
